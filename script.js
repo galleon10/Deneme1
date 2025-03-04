@@ -8,16 +8,20 @@ updateDateTime();
 
 // 📌 Hava Durumu API'si (Istanbul için)
 async function fetchWeather() {
-    const apiKey = "YOUR_OPENWEATHER_API_KEY"; // API anahtarını buraya ekleyin
+    const apiKey = "YOUR_OPENWEATHER_API_KEY"; // OpenWeather API anahtarını buraya ekleyin
     const city = "Istanbul";
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=tr`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        document.getElementById("weather").innerText = `🌤️ ${data.weather[0].description}, ${data.main.temp}°C`;
+        document.getElementById("weather-text").innerText = `🌤️ ${data.weather[0].description}, ${data.main.temp}°C`;
+        document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+        
+        // Hava durumuna göre arka plan değiştir
+        document.body.style.background = data.main.temp > 20 ? "#ffd700" : "#87ceeb";
     } catch (error) {
-        document.getElementById("weather").innerText = "Hava durumu bilgisi alınamadı.";
+        document.getElementById("weather-text").innerText = "Hava durumu bilgisi alınamadı.";
     }
 }
 fetchWeather();
@@ -31,10 +35,9 @@ const driverQuotes = [
 ];
 
 function updateDriverQuote() {
-    const index = new Date().getHours() % driverQuotes.length;
+    const index = Math.floor(Math.random() * driverQuotes.length);
     document.getElementById("driver-quote").innerText = driverQuotes[index];
 }
-updateDriverQuote();
 
 // 📌 Araç Bakım İpuçları
 const carTips = [
@@ -49,14 +52,3 @@ function updateCarTips() {
     document.getElementById("car-tips").innerText = carTips[index];
 }
 updateCarTips();
-
-// 📌 Günlük Mesajı Kaydetme
-function saveMessage() {
-    const message = document.getElementById("daily-message").value;
-    localStorage.setItem("dailyMessage", message);
-}
-
-// Sayfa Yüklendiğinde Mesajı Geri Getir
-window.onload = function () {
-    document.getElementById("daily-message").value = localStorage.getItem("dailyMessage") || "";
-};
